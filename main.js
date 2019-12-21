@@ -100,7 +100,8 @@ async function typeSelectChange(e) {
     return;
   }
   try {
-  let myRequest = "http://html5games.gotoxy.pl/gs36/xml.php?file=" + e.target.value;
+  //let myRequest = "xml.php?file=" + e.target.value;
+    let myRequest = "data/conf/items/" + e.target.value + ".xml";
     const response = await fetch(myRequest);
     const xml = await response.text();
     const parser = new DOMParser();
