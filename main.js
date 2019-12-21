@@ -11,6 +11,7 @@ window.addEventListener("load", init);
 
 function init(){
   let typesContainer = ce("div");
+  typesContainer.id ="container";
   append(typesContainer);
   let selectType = ce("select");
   let dummyoption = ce("option");
@@ -27,7 +28,7 @@ function init(){
   selectType.addEventListener("change", typeSelectChange);
   let items = ce("div");
   items.id = "items";
-  append(items);
+  append(items,typesContainer);
 }
 
 var oldSortColumn = -1;

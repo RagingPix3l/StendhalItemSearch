@@ -1,0 +1,24 @@
+table { width: 800px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border-left: 5px solid black;
+    border-right: 5px solid black;
+}
+td {
+    padding: 5px;
+}
+
+th {
+    cursor: pointer;
+    padding: 5px;
+}
+
+tr:nth-child(odd) {
+    background-color: #ccc;
+    color: white;
+}
+
+div#container {
+    width: 820px;
+    margin: 0 auto;
+}
