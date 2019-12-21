@@ -126,6 +126,12 @@ async function typeSelectChange(e) {
       for (var j = 0;j<resistances.length;++j){
           attributes[resistances[j].attributes[0].nodeValue] = attributes[resistances[j].attributes[0].nodeValue] || attributeCount++;
       }
+
+      let elementalResistances = items[i].getElementsByTagName("susceptibility");
+        for (var j = 0;j<elementalResistances.length;++j){
+            attributes[elementalResistances[j].attributes[0].nodeValue] = attributes[elementalResistances[j].attributes[0].nodeValue] || attributeCount++;
+        }
+
     }
 
     let table = ce("table");
@@ -174,6 +180,14 @@ async function typeSelectChange(e) {
           let value = resistances[j].attributes[1].nodeValue;
           allAttributes[attributes[attributeName]] = value;
       }
+
+        let elementalResistances = items[i].getElementsByTagName("susceptibility");
+        for (var j = 0;j<elementalResistances.length;++j){
+            let attributeName = elementalResistances[j].attributes[0].nodeValue;
+            let value = elementalResistances[j].attributes[1].nodeValue;
+            allAttributes[attributes[attributeName]] = value;
+        }
+
         for (var j=1;j<=attributeCount;++j){
             td = ce("td");
             td.innerHTML = allAttributes[j] || "";
