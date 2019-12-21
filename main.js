@@ -44,6 +44,7 @@ function sortBy(e) {
           break;
         }
     }
+
     let table = document.getElementsByTagName("table")[0];
     let rows = table.getElementsByTagName("tr");
 
@@ -65,8 +66,8 @@ function sortBy(e) {
     var comparator = function (a,b) {
         a = a.getElementsByTagName("td")[sortColumnIndex].innerText;
         b = b.getElementsByTagName("td")[sortColumnIndex].innerText;
-        let ia = parseInt(a);
-        let ib = parseInt(b);
+        let ia = parseFloat(a);
+        let ib = parseFloat(b);
         let r = 0;
         if (!isNaN(ia)){
             if (!isNaN(ib)){
