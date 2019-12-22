@@ -2,6 +2,16 @@ var types = JSON.parse("[\"armors\",\"arrows\",\"axes\",\"books\",\"boots\",\"bo
 const basePageURL = "https://stendhalgame.org";
 
   let ce = document.createElement.bind(document);
+
+  function cext(tag, props) {
+      props = props || {};
+      const e = ce (tag);
+      for (var s in props){
+          e[s] = props[s];
+      }
+      return e;
+  }
+
   let append = function (what,where) { 
     where = where || document.body;
     where.appendChild(what);
@@ -10,24 +20,27 @@ const basePageURL = "https://stendhalgame.org";
 window.addEventListener("load", init);
 
 function init(){
-  let typesContainer = ce("div");
-  typesContainer.id ="container";
+  let typesContainer = cext("div",{id :"container"});
   append(typesContainer);
   let selectType = ce("select");
-  let dummyoption = ce("option");
-  dummyoption.value = -1;
-  dummyoption.innerHTML = ("--select one--");
+  let dummyoption = cext("option", {
+      value : -1,
+      innerHTML : "--select one--",
+  });
   append(dummyoption,selectType);
   for (var i = 0; i<types.length;++i){
-    let option = ce("option");
-    option.innerHTML = option.value = types[i];
+    let option = cext("option",{
+        innerHTML : types[i],
+        value : types[i],
+    });
     append(option,selectType);
   }
   append(selectType,typesContainer);
   selectType.autocomplete = "off";
   selectType.addEventListener("change", typeSelectChange);
-  let items = ce("div");
-  items.id = "items";
+  let items = cext("div",{
+      id:"items",
+  });
   append(items,typesContainer);
 }
 
@@ -156,12 +169,13 @@ async function typeSelectChange(e) {
     append(tr,thead);
     append(td,tr);
     td.innerHTML = "name";
-
     td.addEventListener("click", sortBy);
+
     for (var i in attributes){
-      td = ce("th");
+      td = cext("th",{
+          innerHTML:i,
+      });
       append(td,tr);
-      td.innerHTML = i;
       td.addEventListener("click", sortBy);
     }
 
@@ -170,13 +184,22 @@ async function typeSelectChange(e) {
       let tr = ce("tr");
       let td = ce("td");
       append(td,tr);
-      let img = ce("img");
       let type = item.getElementsByTagName("type")[0];
-      img.src = basePageURL + "/images/item/" + type.attributes[0].nodeValue  + "/" + type.attributes[1].value.replace(/ /g,"_") + ".png";
-      const homepage = basePageURL + "/item/" + type.attributes[0].nodeValue + "/" + items[i].attributes[0].value.replace(/ /g,"_") + ".html";
-      append(img,td);
+
+
+      const homepage = `${basePageURL}/item/${type.attributes[0].nodeValue}/${item.attributes[0].value.replace(/ /g,"_")}.html`;
+
+      append(cext("img",{
+          src : `${basePageURL}/images/item/${type.attributes[0].nodeValue}/${type.attributes[1].value.replace(/ /g,"_")}.png`,
+      }),td);
+
       append(td,tr);
-      td.innerHTML += "<a href=\"" + homepage + "\" target='_blank'>" + items[i].attributes[0].value + "</a>";
+      append(cext('a', {
+          href: homepage,
+          target: "_blank",
+          innerHTML: item.attributes[0].value,
+      }),td);
+
       append(tr,table);
       let itemAttributes = item.getElementsByTagName("attributes");
       let allAttributes = [];
@@ -196,9 +219,9 @@ async function typeSelectChange(e) {
 
 
         for (var j=1;j<=attributeCount;++j){
-            td = ce("td");
-            td.innerHTML = allAttributes[j] || "";
-            append(td,tr);
+            append(cext("td",{
+                innerHTML: allAttributes[j] || "",
+            }),tr);
         }
     }
     append(table,itemsDiv);
