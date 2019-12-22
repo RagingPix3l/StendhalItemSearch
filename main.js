@@ -159,10 +159,10 @@ async function typeSelectChange(e) {
       let img = ce("img");
       let type = items[i].getElementsByTagName("type")[0];
       img.src ="https://stendhalgame.org/images/item/" + type.attributes[0].nodeValue  + "/" + type.attributes[1].value.replace(/ /g,"_") + ".png";
-      const homepage = "https://stendhalgame.org/item/" + type.attributes[0].nodeValue + "/" + type.attributes[1].value.replace(/ /g,"_") + ".html";
+      const homepage = "https://stendhalgame.org/item/" + type.attributes[0].nodeValue + "/" + items[i].attributes[0].value.replace(/ /g,"_") + ".html";
       append(img,td);
       append(td,tr);
-      td.innerHTML += "<a href=\"" + homepage + "\">" + items[i].attributes[0].value + "</a>";
+      td.innerHTML += "<a href=\"" + homepage + "\" target='_blank'>" + items[i].attributes[0].value + "</a>";
       append(tr,table);
       let itemAttributes = items[i].getElementsByTagName("attributes");
       let allAttributes = [];
