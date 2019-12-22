@@ -1,5 +1,5 @@
 var types = JSON.parse("[\"armors\",\"arrows\",\"axes\",\"books\",\"boots\",\"boxes\",\"capturetheflag\",\"cloaks\",\"clubs\",\"containers\",\"crystals\",\"documents\",\"drinks\",\"dummy_weapons\",\"flowers\",\"food\",\"helmets\",\"herbs\",\"jewellery\",\"keys\",\"legs\",\"miscs\",\"missiles\",\"money\",\"ranged\",\"relics\",\"resources\",\"rings\",\"scrolls\",\"shields\",\"special\",\"swords\",\"tokens\",\"tools\"]");
-
+const basePageURL = "https://stendhalgame.org";
 
   let ce = document.createElement.bind(document);
   let append = function (what,where) { 
@@ -97,6 +97,16 @@ function sortBy(e) {
     oldSortColumn = sortColumnIndex;
 }
 
+function parseResistances(allAttributes, attributes, item, type) {
+    let resistances = item.getElementsByTagName(type);
+    for (var j = 0;j<resistances.length;++j){
+        let attributeName = resistances[j].attributes[0].nodeValue;
+        let value = resistances[j].attributes[1].nodeValue;
+        allAttributes[attributes[attributeName]] = value;
+    }
+    return allAttributes;
+}
+
 async function typeSelectChange(e) {
   if (e.target.value == -1){
     return;
@@ -158,8 +168,8 @@ async function typeSelectChange(e) {
       append(td,tr);
       let img = ce("img");
       let type = items[i].getElementsByTagName("type")[0];
-      img.src ="https://stendhalgame.org/images/item/" + type.attributes[0].nodeValue  + "/" + type.attributes[1].value.replace(/ /g,"_") + ".png";
-      const homepage = "https://stendhalgame.org/item/" + type.attributes[0].nodeValue + "/" + items[i].attributes[0].value.replace(/ /g,"_") + ".html";
+      img.src = basePageURL + "/images/item/" + type.attributes[0].nodeValue  + "/" + type.attributes[1].value.replace(/ /g,"_") + ".png";
+      const homepage = basePageURL + "/item/" + type.attributes[0].nodeValue + "/" + items[i].attributes[0].value.replace(/ /g,"_") + ".html";
       append(img,td);
       append(td,tr);
       td.innerHTML += "<a href=\"" + homepage + "\" target='_blank'>" + items[i].attributes[0].value + "</a>";
@@ -175,19 +185,10 @@ async function typeSelectChange(e) {
           }
 
       }
-      let resistances = items[i].getElementsByTagName("resistance");
-      for (var j = 0;j<resistances.length;++j){
-          let attributeName = resistances[j].attributes[0].nodeValue;
-          let value = resistances[j].attributes[1].nodeValue;
-          allAttributes[attributes[attributeName]] = value;
-      }
 
-        let elementalResistances = items[i].getElementsByTagName("susceptibility");
-        for (var j = 0;j<elementalResistances.length;++j){
-            let attributeName = elementalResistances[j].attributes[0].nodeValue;
-            let value = elementalResistances[j].attributes[1].nodeValue;
-            allAttributes[attributes[attributeName]] = value;
-        }
+      allAttributes = parseResistances(allAttributes,attributes,items[i],"resistance");
+      allAttributes = parseResistances(allAttributes,attributes,items[i],"susceptibility");
+
 
         for (var j=1;j<=attributeCount;++j){
             td = ce("td");
