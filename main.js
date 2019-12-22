@@ -123,8 +123,9 @@ async function typeSelectChange(e) {
     let attributes = {};
     let attributeCount = 1;
     let items = xmlDoc.getElementsByTagName("item");
-    for (var i = 0;i<items.length;++i){
-      let itemAttributes = items[i].getElementsByTagName("attributes");
+    for (i = 0;i<items.length;++i){
+        const item = items[i];
+      let itemAttributes = item.getElementsByTagName("attributes");
       if (itemAttributes.length == 1){
         itemAttributes = itemAttributes[0];
         for (let j = 0;j<itemAttributes.children.length;++j){
@@ -132,15 +133,17 @@ async function typeSelectChange(e) {
         }
         
       }
-      let resistances = items[i].getElementsByTagName("resistance");
-      for (var j = 0;j<resistances.length;++j){
-          attributes[resistances[j].attributes[0].nodeValue] = attributes[resistances[j].attributes[0].nodeValue] || attributeCount++;
-      }
+      const fillAttributes = function (source){
+          return function () {
+              const elements = item.getElementsByTagName(source);
+              for (j = 0;j<elements.length;++j){
+                  attributes[elements[j].attributes[0].nodeValue] = attributes[elements[j].attributes[0].nodeValue] || attributeCount++;
+              }
+          };
+      };
 
-      let elementalResistances = items[i].getElementsByTagName("susceptibility");
-        for (var j = 0;j<elementalResistances.length;++j){
-            attributes[elementalResistances[j].attributes[0].nodeValue] = attributes[elementalResistances[j].attributes[0].nodeValue] || attributeCount++;
-        }
+      fillAttributes("resistance")();
+      fillAttributes("susceptibility")();
 
     }
 
@@ -163,25 +166,27 @@ async function typeSelectChange(e) {
     }
 
     for (var i = 0;i<items.length;++i){
+        const item = items[i];
       let tr = ce("tr");
       let td = ce("td");
       append(td,tr);
       let img = ce("img");
-      let type = items[i].getElementsByTagName("type")[0];
+      let type = item.getElementsByTagName("type")[0];
       img.src = basePageURL + "/images/item/" + type.attributes[0].nodeValue  + "/" + type.attributes[1].value.replace(/ /g,"_") + ".png";
       const homepage = basePageURL + "/item/" + type.attributes[0].nodeValue + "/" + items[i].attributes[0].value.replace(/ /g,"_") + ".html";
       append(img,td);
       append(td,tr);
       td.innerHTML += "<a href=\"" + homepage + "\" target='_blank'>" + items[i].attributes[0].value + "</a>";
       append(tr,table);
-      let itemAttributes = items[i].getElementsByTagName("attributes");
+      let itemAttributes = item.getElementsByTagName("attributes");
       let allAttributes = [];
     
       if (itemAttributes.length==1){
         itemAttributes = itemAttributes[0];
-        for (var j = 0;j<itemAttributes.children.length;++j){
-          let attributeName = itemAttributes.children[j].nodeName;
-          allAttributes[attributes[attributeName]] = itemAttributes.children[j].attributes[0].nodeValue;
+        for (j = 0;j<itemAttributes.children.length;++j){
+            const child = itemAttributes.children[j];
+            let attributeName = child.nodeName;
+            allAttributes[attributes[attributeName]] = child.attributes[0].nodeValue;
           }
 
       }
