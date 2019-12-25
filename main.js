@@ -1,3 +1,7 @@
+"use strict";
+
+(function() {
+
 var types = JSON.parse("[\"armors\",\"arrows\",\"axes\",\"books\",\"boots\",\"boxes\",\"capturetheflag\",\"cloaks\",\"clubs\",\"containers\",\"crystals\",\"documents\",\"drinks\",\"dummy_weapons\",\"flowers\",\"food\",\"helmets\",\"herbs\",\"jewellery\",\"keys\",\"legs\",\"miscs\",\"missiles\",\"money\",\"ranged\",\"relics\",\"resources\",\"rings\",\"scrolls\",\"shields\",\"special\",\"swords\",\"tokens\",\"tools\"]");
 var images = JSON.parse("[\"/images/item/armor/golden_chainmail.png\",\"/images/item/ammunition/dark_arrow.png\",\"/images/item/axe/twosided_poleaxe.png\",\"/images/item/book/book_blue.png\",\"/images/item/boots/shadow_boots.png\",\"/images/item/box/stocking.png\",\"\",\"/images/item/cloak/black_dragon_cloak.png\",\"/images/item/club/grand_warhammer.png\",\"/images/item/container/empty_goblet.png\",\"/images/item/crystal/crystal_pink.png\",\"/images/item/documents/paper.png\",\"/images/item/drink/mana.png\",\"/images/item/club/dummy_melee_8.png\",\"/images/item/flower/rose.png\",\"/images/item/food/watermelon.png\",\"/images/item/helmet/mithril_helmet.png\",\"/images/item/herb/arandula.png\",\"/images/item/jewellery/blackpearl.png\",\"/images/item/key/purple.png\",\"/images/item/legs/golden_legs.png\",\"/images/item/misc/dice.png\",\"/images/item/missile/wooden_spear.png\",\"/images/item/money/gold.png\",\"/images/item/ranged/training_bow.png\",\"/images/item/relic/amulet.png\",\"/images/item/resource/grain.png\",\"/images/item/ring/engagement_ring.png\",\"/images/item/scroll/fado.png\",\"/images/item/shield/blue_shield.png\",\"/images/item/special/mythical_egg.png\",\"/images/item/sword/nihonto.png\",\"/images/item/token/darkyellow_round_token.png\",\"/images/item/tool/pick.png\"]");
 
@@ -29,7 +33,7 @@ async function init(){
   let selectType = ce("select");
   let dummyoption = cext("option", {
       value : -1,
-      innerHTML : "--select one--",
+      textContent : "--select one--",
   });
   append(dummyoption,selectType);
   append(selectType,typesContainer);
@@ -48,7 +52,7 @@ async function init(){
 
       if (images[i].length>0){
           let iconContainer = cext("div");
-          let caption = cext("span", {innerHTML: types[i]});
+          let caption = cext("span", {textContent: types[i]});
           let img = cext("img", {
                 src:basePageURL + images[i],
           });
@@ -58,7 +62,7 @@ async function init(){
 
           append(iconContainer,icons);
           iconContainer.addEventListener('click', function (e) {
-                 selectType.value = e.currentTarget.getElementsByTagName("span")[0].innerHTML;
+                 selectType.value = e.currentTarget.getElementsByTagName("span")[0].textContent;
                  icons.style.display  = "none";
                  showIcons.style.display = "";
                  typeSelectChange({target:selectType});
@@ -81,7 +85,7 @@ async function init(){
   //
   //
       let option = cext("option",{
-        innerHTML : types[i],
+        textContent : types[i],
         value : types[i],
     });
     append(option,selectType);
@@ -129,8 +133,8 @@ function sortBy(e) {
     }
 
     var comparator = function (a,b) {
-        a = a.getElementsByTagName("td")[sortColumnIndex].innerText;
-        b = b.getElementsByTagName("td")[sortColumnIndex].innerText;
+        a = a.getElementsByTagName("td")[sortColumnIndex].textContent;
+        b = b.getElementsByTagName("td")[sortColumnIndex].textContent;
         let ia = parseFloat(a);
         let ib = parseFloat(b);
         let r = 0;
@@ -186,10 +190,10 @@ async function typeSelectChange(e) {
   }
   try {
   //let myRequest = "xml.php?file=" + e.target.value;
-    let myRequest = "data/conf/items/" + e.target.value + ".xml";
+    let myRequest = "data/conf/items/" + escape(e.target.value) + ".xml";
     const xmlDoc  = await fetchXML(myRequest);
     let itemsDiv = document.getElementById("items");
-    itemsDiv.innerHTML = "";
+    itemsDiv.textContent = "";
     let attributes = {};
     let attributeCount = 1;
     let items = xmlDoc.getElementsByTagName("item");
@@ -225,12 +229,12 @@ async function typeSelectChange(e) {
     append(thead,table);
     append(tr,thead);
     append(td,tr);
-    td.innerHTML = "name";
+    td.textContent = "name";
     td.addEventListener("click", sortBy);
 
     for (var i in attributes){
       td = cext("th",{
-          innerHTML:i,
+          textContent:i,
       });
       append(td,tr);
       td.addEventListener("click", sortBy);
@@ -244,17 +248,17 @@ async function typeSelectChange(e) {
       let type = item.getElementsByTagName("type")[0];
 
 
-      const homepage = `${basePageURL}/item/${type.attributes[0].nodeValue}/${item.attributes[0].value.replace(/ /g,"_")}.html`;
+      const homepage = `${basePageURL}/item/${escape(type.attributes[0].nodeValue)}/${escape(item.attributes[0].value.replace(/ /g,"_"))}.html`;
 
       append(cext("img",{
-          src : `${basePageURL}/images/item/${type.attributes[0].nodeValue}/${type.attributes[1].value.replace(/ /g,"_")}.png`,
+          src : `${basePageURL}/images/item/${escape(type.attributes[0].nodeValue)}/${escape(type.attributes[1].value.replace(/ /g,"_"))}.png`,
       }),td);
 
       append(td,tr);
       append(cext('a', {
           href: homepage,
           target: "_blank",
-          innerHTML: item.attributes[0].value,
+          textContent: item.attributes[0].value,
       }),td);
 
       append(tr,table);
@@ -277,7 +281,7 @@ async function typeSelectChange(e) {
 
         for (var j=1;j<=attributeCount;++j){
             append(cext("td",{
-                innerHTML: allAttributes[j] || "",
+                textContent: allAttributes[j] || "",
             }),tr);
         }
     }
@@ -286,3 +290,5 @@ async function typeSelectChange(e) {
     console.log(ex);
   }
 }
+
+})();
