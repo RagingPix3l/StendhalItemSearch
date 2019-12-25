@@ -1,4 +1,6 @@
 var types = JSON.parse("[\"armors\",\"arrows\",\"axes\",\"books\",\"boots\",\"boxes\",\"capturetheflag\",\"cloaks\",\"clubs\",\"containers\",\"crystals\",\"documents\",\"drinks\",\"dummy_weapons\",\"flowers\",\"food\",\"helmets\",\"herbs\",\"jewellery\",\"keys\",\"legs\",\"miscs\",\"missiles\",\"money\",\"ranged\",\"relics\",\"resources\",\"rings\",\"scrolls\",\"shields\",\"special\",\"swords\",\"tokens\",\"tools\"]");
+var images = JSON.parse("[\"/images/item/armor/golden_chainmail.png\",\"/images/item/ammunition/dark_arrow.png\",\"/images/item/axe/twosided_poleaxe.png\",\"/images/item/book/book_blue.png\",\"/images/item/boots/shadow_boots.png\",\"/images/item/box/stocking.png\",\"\",\"/images/item/cloak/black_dragon_cloak.png\",\"/images/item/club/grand_warhammer.png\",\"/images/item/container/empty_goblet.png\",\"/images/item/crystal/crystal_pink.png\",\"/images/item/documents/paper.png\",\"/images/item/drink/mana.png\",\"/images/item/club/dummy_melee_8.png\",\"/images/item/flower/rose.png\",\"/images/item/food/watermelon.png\",\"/images/item/helmet/mithril_helmet.png\",\"/images/item/herb/arandula.png\",\"/images/item/jewellery/blackpearl.png\",\"/images/item/key/purple.png\",\"/images/item/legs/golden_legs.png\",\"/images/item/misc/dice.png\",\"/images/item/missile/wooden_spear.png\",\"/images/item/money/gold.png\",\"/images/item/ranged/training_bow.png\",\"/images/item/relic/amulet.png\",\"/images/item/resource/grain.png\",\"/images/item/ring/engagement_ring.png\",\"/images/item/scroll/fado.png\",\"/images/item/shield/blue_shield.png\",\"/images/item/special/mythical_egg.png\",\"/images/item/sword/nihonto.png\",\"/images/item/token/darkyellow_round_token.png\",\"/images/item/tool/pick.png\"]");
+
 const basePageURL = "https://stendhalgame.org";
 
   let ce = document.createElement.bind(document);
@@ -19,23 +21,73 @@ const basePageURL = "https://stendhalgame.org";
 
 window.addEventListener("load", init);
 
-function init(){
+async function init(){
   let typesContainer = cext("div",{id :"container"});
   append(typesContainer);
+  let icons = cext("div",{id:"images"});
+
   let selectType = ce("select");
   let dummyoption = cext("option", {
       value : -1,
       innerHTML : "--select one--",
   });
   append(dummyoption,selectType);
+  append(selectType,typesContainer);
+  const showIcons = (cext("input",{
+      value:"showicons",
+      type:"button",
+      onclick: function () {
+          icons.style.display = '';
+      },
+  }));
+  showIcons.style.display = "none";
+  append(showIcons,typesContainer);
+  append(icons,typesContainer);
+  // let images = [];
   for (var i = 0; i<types.length;++i){
-    let option = cext("option",{
+
+      if (images[i].length>0){
+          let iconContainer = cext("div");
+          let caption = cext("span", {innerHTML: types[i]});
+          let img = cext("img", {
+                src:basePageURL + images[i],
+          });
+
+          append(img,iconContainer);
+          append(caption,iconContainer);
+
+          append(iconContainer,icons);
+          iconContainer.addEventListener('click', function (e) {
+                 selectType.value = e.currentTarget.getElementsByTagName("span")[0].innerHTML;
+                 icons.style.display  = "none";
+                 showIcons.style.display = "";
+                 typeSelectChange({target:selectType});
+          });
+      }
+
+      //
+  //   let myRequest = "data/conf/items/" + types[i] + ".xml";
+  //   const xmlDoc  = await fetchXML(myRequest);
+  //   let items = xmlDoc.getElementsByTagName("item");
+  //   if (items.length>0){
+  //       const item = items[ ((Math.random()*items.length))<<0];
+  //
+  //       let type = item.getElementsByTagName("type")[0];
+  //       const src = `/images/item/${type.attributes[0].nodeValue}/${type.attributes[1].value.replace(/ /g,"_")}.png`;
+  //       images[i] = src;
+  //   }else{
+  //       images[i] = "";
+  //   }
+  //
+  //
+      let option = cext("option",{
         innerHTML : types[i],
         value : types[i],
     });
     append(option,selectType);
   }
-  append(selectType,typesContainer);
+//  console.log(JSON.stringify(images));
+
   selectType.autocomplete = "off";
   selectType.addEventListener("change", typeSelectChange);
   let items = cext("div",{
@@ -120,6 +172,14 @@ function parseResistances(allAttributes, attributes, item, type) {
     return allAttributes;
 }
 
+async function fetchXML(url){
+    const response = await fetch(url);
+    const xml = await response.text();
+    const parser = new DOMParser();
+    const xmlDoc  = parser.parseFromString(xml,'text/xml');
+    return xmlDoc;
+}
+
 async function typeSelectChange(e) {
   if (e.target.value == -1){
     return;
@@ -127,10 +187,7 @@ async function typeSelectChange(e) {
   try {
   //let myRequest = "xml.php?file=" + e.target.value;
     let myRequest = "data/conf/items/" + e.target.value + ".xml";
-    const response = await fetch(myRequest);
-    const xml = await response.text();
-    const parser = new DOMParser();
-    const xmlDoc  = parser.parseFromString(xml,'text/xml');
+    const xmlDoc  = await fetchXML(myRequest);
     let itemsDiv = document.getElementById("items");
     itemsDiv.innerHTML = "";
     let attributes = {};
