@@ -6,6 +6,9 @@ var types = JSON.parse("[\"armors\",\"arrows\",\"axes\",\"books\",\"boots\",\"bo
 var images = JSON.parse("[\"/images/item/armor/golden_chainmail.png\",\"/images/item/ammunition/dark_arrow.png\",\"/images/item/axe/twosided_poleaxe.png\",\"/images/item/book/book_blue.png\",\"/images/item/boots/shadow_boots.png\",\"/images/item/box/stocking.png\",\"\",\"/images/item/cloak/black_dragon_cloak.png\",\"/images/item/club/grand_warhammer.png\",\"/images/item/container/empty_goblet.png\",\"/images/item/crystal/crystal_pink.png\",\"/images/item/documents/paper.png\",\"/images/item/drink/mana.png\",\"/images/item/club/dummy_melee_8.png\",\"/images/item/flower/rose.png\",\"/images/item/food/watermelon.png\",\"/images/item/helmet/mithril_helmet.png\",\"/images/item/herb/arandula.png\",\"/images/item/jewellery/blackpearl.png\",\"/images/item/key/purple.png\",\"/images/item/legs/golden_legs.png\",\"/images/item/misc/dice.png\",\"/images/item/missile/wooden_spear.png\",\"/images/item/money/gold.png\",\"/images/item/ranged/training_bow.png\",\"/images/item/relic/amulet.png\",\"/images/item/resource/grain.png\",\"/images/item/ring/engagement_ring.png\",\"/images/item/scroll/fado.png\",\"/images/item/shield/blue_shield.png\",\"/images/item/special/mythical_egg.png\",\"/images/item/sword/nihonto.png\",\"/images/item/token/darkyellow_round_token.png\",\"/images/item/tool/pick.png\"]");
 
 const basePageURL = "https://stendhalgame.org";
+// TODO: parse stendhalgame.org to get current version
+const version = "01";
+const release = "32";
 
   let ce = document.createElement.bind(document);
 
@@ -190,7 +193,7 @@ async function typeSelectChange(e) {
   }
   try {
   //let myRequest = "xml.php?file=" + e.target.value;
-    let myRequest = "data/conf/items/" + escape(e.target.value) + ".xml";
+    let myRequest = "https://raw.githubusercontent.com/arianne/stendhal/VERSION_" + escape(version) + "_RELEASE_" + escape(release) + "/data/conf/items/" + escape(e.target.value) + ".xml";
     const xmlDoc  = await fetchXML(myRequest);
     let itemsDiv = document.getElementById("items");
     itemsDiv.textContent = "";
