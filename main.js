@@ -177,7 +177,9 @@ function parseResistances(allAttributes, attributes, item, type) {
 }
 
 async function fetchXML(url){
-    const response = await fetch(url);
+	// send request through CORS proxy to be able to access response from stendhalgame.org
+	const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const response = await fetch(proxyurl + url);
     const xml = await response.text();
     const parser = new DOMParser();
     const xmlDoc  = parser.parseFromString(xml,'text/xml');
