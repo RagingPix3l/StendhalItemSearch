@@ -2,8 +2,8 @@
 
 (function() {
 
-var types = JSON.parse("[\"armors\",\"arrows\",\"axes\",\"books\",\"boots\",\"boxes\",\"capturetheflag\",\"cloaks\",\"clubs\",\"containers\",\"crystals\",\"documents\",\"drinks\",\"dummy_weapons\",\"flowers\",\"food\",\"helmets\",\"herbs\",\"jewellery\",\"keys\",\"legs\",\"miscs\",\"missiles\",\"money\",\"ranged\",\"relics\",\"resources\",\"rings\",\"scrolls\",\"shields\",\"special\",\"swords\",\"tokens\",\"tools\"]");
-var images = JSON.parse("[\"/images/item/armor/golden_chainmail.png\",\"/images/item/ammunition/dark_arrow.png\",\"/images/item/axe/twosided_poleaxe.png\",\"/images/item/book/book_blue.png\",\"/images/item/boots/shadow_boots.png\",\"/images/item/box/stocking.png\",\"\",\"/images/item/cloak/black_dragon_cloak.png\",\"/images/item/club/grand_warhammer.png\",\"/images/item/container/empty_goblet.png\",\"/images/item/crystal/crystal_pink.png\",\"/images/item/documents/paper.png\",\"/images/item/drink/mana.png\",\"/images/item/club/dummy_melee_8.png\",\"/images/item/flower/rose.png\",\"/images/item/food/watermelon.png\",\"/images/item/helmet/mithril_helmet.png\",\"/images/item/herb/arandula.png\",\"/images/item/jewellery/blackpearl.png\",\"/images/item/key/purple.png\",\"/images/item/legs/golden_legs.png\",\"/images/item/misc/dice.png\",\"/images/item/missile/wooden_spear.png\",\"/images/item/money/gold.png\",\"/images/item/ranged/training_bow.png\",\"/images/item/relic/amulet.png\",\"/images/item/resource/grain.png\",\"/images/item/ring/engagement_ring.png\",\"/images/item/scroll/fado.png\",\"/images/item/shield/blue_shield.png\",\"/images/item/special/mythical_egg.png\",\"/images/item/sword/nihonto.png\",\"/images/item/token/darkyellow_round_token.png\",\"/images/item/tool/pick.png\"]");
+var types = JSON.parse("[\"armors\",\"arrows\",\"axes\",\"books\",\"boots\",\"boxes\",\"capturetheflag\",\"cloaks\",\"clubs\",\"containers\",\"crystals\",\"documents\",\"drinks\",\"flowers\",\"food\",\"helmets\",\"herbs\",\"jewellery\",\"keys\",\"legs\",\"miscs\",\"missiles\",\"money\",\"ranged\",\"relics\",\"resources\",\"rings\",\"scrolls\",\"shields\",\"special\",\"swords\",\"tokens\",\"tools\"]");
+var images = JSON.parse("[\"/images/item/armor/golden_chainmail.png\",\"/images/item/ammunition/dark_arrow.png\",\"/images/item/axe/twosided_poleaxe.png\",\"/images/item/book/book_blue.png\",\"/images/item/boots/shadow_boots.png\",\"/images/item/box/stocking.png\",\"\",\"/images/item/cloak/black_dragon_cloak.png\",\"/images/item/club/grand_warhammer.png\",\"/images/item/container/empty_goblet.png\",\"/images/item/crystal/crystal_pink.png\",\"/images/item/documents/paper.png\",\"/images/item/drink/mana.png\",\"/images/item/flower/rose.png\",\"/images/item/food/watermelon.png\",\"/images/item/helmet/mithril_helmet.png\",\"/images/item/herb/arandula.png\",\"/images/item/jewellery/blackpearl.png\",\"/images/item/key/purple.png\",\"/images/item/legs/golden_legs.png\",\"/images/item/misc/dice.png\",\"/images/item/missile/wooden_spear.png\",\"/images/item/money/gold.png\",\"/images/item/ranged/training_bow.png\",\"/images/item/relic/amulet.png\",\"/images/item/resource/grain.png\",\"/images/item/ring/engagement_ring.png\",\"/images/item/scroll/fado.png\",\"/images/item/shield/blue_shield.png\",\"/images/item/special/mythical_egg.png\",\"/images/item/sword/nihonto.png\",\"/images/item/token/darkyellow_round_token.png\",\"/images/item/tool/pick.png\"]");
 
 const basePageURL = "https://stendhalgame.org";
 
@@ -18,7 +18,7 @@ const basePageURL = "https://stendhalgame.org";
       return e;
   }
 
-  let append = function (what,where) { 
+  let append = function (what,where) {
     where = where || document.body;
     where.appendChild(what);
   };
@@ -177,7 +177,9 @@ function parseResistances(allAttributes, attributes, item, type) {
 }
 
 async function fetchXML(url){
-    const response = await fetch(url);
+	// send request through CORS proxy to be able to access response from stendhalgame.org
+	const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const response = await fetch(proxyurl + url);
     const xml = await response.text();
     const parser = new DOMParser();
     const xmlDoc  = parser.parseFromString(xml,'text/xml');
@@ -189,8 +191,7 @@ async function typeSelectChange(e) {
     return;
   }
   try {
-  //let myRequest = "xml.php?file=" + e.target.value;
-    let myRequest = "data/conf/items/" + escape(e.target.value) + ".xml";
+    let myRequest = basePageURL + "/data/conf/items/" + escape(e.target.value) + ".xml";
     const xmlDoc  = await fetchXML(myRequest);
     let itemsDiv = document.getElementById("items");
     itemsDiv.textContent = "";
@@ -205,7 +206,7 @@ async function typeSelectChange(e) {
         for (let j = 0;j<itemAttributes.children.length;++j){
             attributes[itemAttributes.children[j].nodeName] = attributes[itemAttributes.children[j].nodeName] || attributeCount++;
         }
-        
+
       }
       const fillAttributes = function (source){
           return function () {
@@ -264,7 +265,7 @@ async function typeSelectChange(e) {
       append(tr,table);
       let itemAttributes = item.getElementsByTagName("attributes");
       let allAttributes = [];
-    
+
       if (itemAttributes.length==1){
         itemAttributes = itemAttributes[0];
         for (j = 0;j<itemAttributes.children.length;++j){
